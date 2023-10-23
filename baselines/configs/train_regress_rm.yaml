@@ -1,0 +1,60 @@
+project_name: "group-alignment-regress-rm"
+expid: None
+experiment_name: "test_ray_hf"
+
+model_ckpt: ./recover_weights_alpaca_7b
+#model_ckpt: ./llama-2-13b-chat-hf
+prompt_format: llama2
+use_int8: True
+gpu_ids: [8,9]
+
+lora:
+  r: 12
+  lora_alpha: 32
+  lora_dropout: 0.05
+  bias: none
+  task_type: CAUSAL_LM
+
+data:
+  task: reward_model_regress
+  #dataset: opinion_qa
+  dataset: anthropic_global_opinions
+  oqa_datapath: ./OQA_data/ #
+  group_idx: 0 # finetune which group
+  group: None
+  PEW_SURVEY_LIST: [26, 27, 29, 32, 34, 36, 41, 42, 43, 45, 49, 50, 54, 82, 92] 
+  CONTEXT: default # [default, steer-portray, steer-qa]
+  train_nq: 15 # choose from [15, 50, 100, 200] how many questions are used to train.
+  
+
+trainer:
+  num_train_epochs: 10000
+  output_dir: "./finetune_baselines/SFT_models" #set to model saving directory
+  reproduce_exp_log_dir: "./finetune_baselines/exp_infolog/" # for saving qkeys used for train and test
+  learning_rate: 1e-5
+  weight_decay: 0.01
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  bf16: True
+
+ray_trainer:
+  _target_: ray.train.huggingface.TransformersTrainer
+  run_config:
+    _target_: ray.air.config.RunConfig
+    callbacks: 
+      - _target_: ray.air.integrations.wandb.WandbLoggerCallback
+        project: ${project_name}
+        group: ${experiment_name}
+    checkpoint_config:
+      _target_: ray.air.config.CheckpointConfig
+      num_to_keep: 1
+    storage_path: ./finetune_baselines/${project_name}/${experiment_name}
+  scaling_config:
+    _target_: ray.air.config.ScalingConfig
+    num_workers: 2
+    use_gpu: True
+
+use_ray: False
+
+seed: 0
