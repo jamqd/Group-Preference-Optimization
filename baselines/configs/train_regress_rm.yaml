@@ -13,7 +13,7 @@ lora:
   lora_alpha: 32
   lora_dropout: 0.05
   bias: none
-  task_type: SEQ_CLS
+  task_type: SEQ_CLS 
 
 data:
   task: reward_model_regress
