@@ -73,13 +73,11 @@ Train GPO: ``python train_gpo.py``
 
 
 ```
-@misc{zhao2023group,
-      title={Group Preference Optimization: Few-Shot Alignment of Large Language Models}, 
-      author={Siyan Zhao and John Dang and Aditya Grover},
-      year={2023},
-      eprint={2310.11523},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
+@article{zhao2023group,
+  title={Group preference optimization: Few-shot alignment of large language models},
+  author={Zhao, Siyan and Dang, John and Grover, Aditya},
+  journal={arXiv preprint arXiv:2310.11523},
+  year={2023}
 }
 ```
 
